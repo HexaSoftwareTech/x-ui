@@ -1,6 +1,5 @@
 FROM golang:latest AS builder
 WORKDIR /root
-COPY x-ui .
 RUN go build main.go
 
 
