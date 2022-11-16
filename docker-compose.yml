@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   xui:
-    image: enwaiax/x-ui
+    image: hossinasaadi/x-ui
     container_name: x-ui
     volumes:
       - $PWD/db/:/etc/x-ui/
