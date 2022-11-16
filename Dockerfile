@@ -12,6 +12,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends -y ca-certifica
 ENV TZ=Asia/Shanghai
 WORKDIR /root
 COPY --from=builder  /root/main /root/x-ui
-COPY x-ui/bin/. /root/bin/.
+COPY ./bin/. /root/bin/.
 VOLUME [ "/etc/x-ui" ]
 CMD [ "./x-ui" ]
