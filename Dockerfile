@@ -1,6 +1,6 @@
 FROM golang:latest AS builder
 WORKDIR /root
-RUN go mod init
+COPY . .
 RUN go build main.go
 
 
