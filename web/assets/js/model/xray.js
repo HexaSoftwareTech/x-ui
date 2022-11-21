@@ -974,6 +974,7 @@ class Inbound extends XrayCommonClass {
         params.set("type", this.stream.network);
         if (this.xtls) {
             params.set("security", "xtls");
+            address = this.stream.tls.server;
         } else {
             params.set("security", this.stream.security);
         }
