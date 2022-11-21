@@ -59,7 +59,7 @@ func (s *InboundService) getClients(inbound *model.Inbound) ([]model.Client, err
 
 	clients := settings["clients"]
 	if clients == nil {
-		return nil, fmt.Errorf("Clients are null")
+		return nil, nil
 	}
 	return clients, nil
 }
