@@ -1,19 +1,19 @@
 # x-ui
+
 > **Disclaimer: This project is only for personal learning and communication, please do not use it for illegal purposes, please do not use it in a production environment**
 
+xray panel supporting multi-protocol, **Multi-lang (English,Chinese)**, **IP Restriction Per Inbound**
 
-xray panel supporting multi-protocol, **Multi-lang (English,Chinese)**, **IP Restrication Per Inbound**
-
-| Features        | Enable?           |
-| ------------- |:-------------:|
-| Multi-lang | :heavy_check_mark: |
-| [IP Restriction](https://github.com/hossinasaadi/x-ui/#enable-ip-restrictions-per-inbound) | :heavy_check_mark: |
-| [Inbound Multi User](https://github.com/hossinasaadi/x-ui/#enable-multi-user-traffic--exprire-day) | :heavy_check_mark: |
+| Features                                                                                                        |      Enable?       |
+| --------------------------------------------------------------------------------------------------------------- | :----------------: |
+| Multi-lang                                                                                                      | :heavy_check_mark: |
+| [IP Restriction](https://github.com/hossinasaadi/x-ui/#enable-ip-restrictions-per-inbound)                      | :heavy_check_mark: |
+| [Inbound Multi User](https://github.com/hossinasaadi/x-ui/#enable-multi-user-traffic--exprire-day)              | :heavy_check_mark: |
 | [Multi User Traffic & expire day](https://github.com/hossinasaadi/x-ui/#enable-multi-user-traffic--exprire-day) | :heavy_check_mark: |
-| [REST API](https://github.com/hossinasaadi/x-ui/pull/51) | :heavy_check_mark: |
-| [Telegram BOT](https://github.com/hossinasaadi/x-ui/pull/110) | :heavy_check_mark: |
+| [REST API](https://github.com/hossinasaadi/x-ui/pull/51)                                                        | :heavy_check_mark: |
+| [Telegram BOT](https://github.com/hossinasaadi/x-ui/pull/110)                                                   | :heavy_check_mark: |
 
-**If you think this project is helpful to you, you may wish to give a** :star2: 
+**If you think this project is helpful to you, you may wish to give a** :star2:
 
 **Feel Free for Donation :** :heart:
 
@@ -30,36 +30,43 @@ Ether ETH: `0x256ddA590c35638fA4B3a25Ec4544Db087ceE826`
 - Traffic statistics, limit traffic, limit expiration time
 - Customizable xray configuration templates
 - Support https access panel (self-provided domain name + ssl certificate)
-- Support one-click SSL certificate application and automatic renewal
+- Support one-click SSL certificate application and automatic renewal with standalone and DNS methods
 - For more advanced configuration items, please refer to the panel
 
 # Enable IP Restrictions Per Inbound
+
 `!!! NO NEED TO DO THIS IF YOU HAVE FRESH INSTALL`
 
 1 - open panel settings and tab xray related settings find `"api": ` and put bellow code just before it :
- ```json
- "log": {
-    "loglevel": "warning", 
-    "access": "./access.log"
-  }, 
+
+```json
+"log": {
+   "loglevel": "warning",
+   "access": "./access.log"
+ },
 ```
+
 - change access log path as you want
 
 2 - add **IP limit and Unique Email** for inbound(vmess & vless)
 
 # Enable Multi User Traffic & Exprire Day
+
 ![Screenshot from 2022-11-15 07-43-58](https://user-images.githubusercontent.com/16622377/201922652-111ff5b8-272b-49f5-a656-d6f57d79eaed.png)
 
 `!!! NO NEED TO DO THIS IF YOU HAVE FRESH INSTALL`
 
 **for enable traffic for users you should do :**
 
-find this in config : 
-``` json
+find this in config :
+
+```json
  "policy": {
     "system": {
 ```
-**and add this just after  ` "policy": {` :**
+
+**and add this just after ` "policy": {` :**
+
 ```json
     "levels": {
       "0": {
@@ -69,8 +76,8 @@ find this in config :
     },
 ```
 
-
 **the final output is like :**
+
 ```json
   "policy": {
     "levels": {
@@ -87,7 +94,9 @@ find this in config :
   },
   "routing": {
 ```
- restart panel
+
+restart panel
+
 # Install & Upgrade
 
 ```
@@ -145,18 +154,22 @@ docker build -t x-ui .
 
 > This feature and tutorial are provided by [FranzKafkaYu](https://github.com/FranzKafkaYu)
 
-The script has a built-in SSL certificate application function. To use this script to apply for a certificate, the following conditions must be met:
+The script has a built-in SSL certificate application function. To use this script to apply for a certificate, you have to methods:
+
+### 1. DNS (Cloudflare)
+
+The following conditions must be met:
 
 - Know the Cloudflare registered email
 - Know the Cloudflare Global API Key
 - The domain name has been resolved to the current server through cloudflare
 
 How to get the Cloudflare Global API Key:
-    ![](media/bda84fbc2ede834deaba1c173a932223.png)
-    ![](media/d13ffd6a73f938d1037d0708e31433bf.png)
+![](media/bda84fbc2ede834deaba1c173a932223.png)
+![](media/d13ffd6a73f938d1037d0708e31433bf.png)
 
 When using, just enter `email`, `domain`, `API KEY` and the schematic diagram is as follows：
-        ![](media/2022-04-04_141259.png)
+![](media/2022-04-04_141259.png)
 
 Precautions:
 
@@ -164,6 +177,12 @@ Precautions:
 - By default, Let'sEncrypt is used as the CA party
 - The certificate installation directory is the /root/cert directory
 - The certificates applied for by this script are all generic domain name certificates
+
+### 2. Standalone
+
+The following conditions must be met:
+
+- The domain name has been resolved to the current server through setting an A DNS record manually
 
 ## Tg robot use (under development, temporarily unavailable)
 
@@ -176,10 +195,9 @@ Set the robot-related parameters in the panel background, including:
 - Tg Robot ChatId
 - Tg robot cycle runtime, in crontab syntax
 
-
 Reference syntax:
 
-- 30 * * * * * //Notify at the 30s of each point
+- 30 \* \* \* \* \* //Notify at the 30s of each point
 - @hourly // hourly notification
 - @daily // Daily notification (00:00 in the morning)
 - @every 8h // notify every 8 hours
@@ -191,7 +209,6 @@ Reference syntax:
 - Traffic warning reminder
 
 More features are planned...
-
 
 ## suggestion system
 
