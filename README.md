@@ -154,9 +154,9 @@ docker build -t x-ui .
 
 > This feature and tutorial are provided by [FranzKafkaYu](https://github.com/FranzKafkaYu)
 
-The script has a built-in SSL certificate application function. To use this script to apply for a certificate, you have to methods:
+The script has a built-in SSL certificate application function. To use this script to apply for a certificate, you have two option:
 
-### 1. DNS (Cloudflare)
+### 1. DNS (Recommended)
 
 The following conditions must be met:
 
