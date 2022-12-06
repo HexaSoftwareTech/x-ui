@@ -408,7 +408,129 @@ show_xray_status() {
     fi
 }
 
+#this will be an entrance for ssl cert issue
+#here we can provide two different methods to issue cert
+#first.DNS mode second.standalone API mode
 ssl_cert_issue() {
+    local method=""
+    echo -E ""
+    LOGD "******Instructions for use******"
+    LOGI "This script provides two ways to implement certificate issuance"
+    LOGI "1: acme DNS API mode, Need to provide Cloudflare Global API Key"
+    LOGI "2: acme standalone mode, Ports need to be kept open for renewal"
+    LOGI "It is recommended to use method 1 to apply , if method 1 fails, you can try method 2 again"
+    read -p "Please choose the method you want to use": method
+    LOGI "The way you are using is ${method}"
+
+    if [ "${method}" == "1" ]; then
+        ssl_cert_issue_by_cloudflare
+    elif [ "${method}" == "2" ]; then
+        ssl_cert_issue_standalone
+    else
+        LOGE "Invalid input, please check your input, the script will exit..."
+        exit 1
+    fi
+}
+
+install_acme() {
+    cd ~
+    LOGI "Start installing acme scripts..."
+    curl https://get.acme.sh | sh
+    if [ $? -ne 0 ]; then
+        LOGE "acme installation failed"
+        return 1
+    else
+        LOGI "acme installed successfully"
+    fi
+    return 0
+}
+
+#method for standalone mode
+ssl_cert_issue_standalone() {
+    #install acme first
+    install_acme
+    if [ $? -ne 0 ]; then
+        LOGE "can't install acme, Please check the error log"
+        exit 1
+    fi
+    #install socat second
+    if [[ x"${release}" == x"centos" ]]; then
+        yum install socat -y
+    else
+        apt install socat -y
+    fi
+    if [ $? -ne 0 ]; then
+        LOGE "Unable to install socat, Please check the error log"
+        exit 1
+    else
+        LOGI "socat installed successfully"
+    fi
+    #creat a directory for install cert
+    certPath=/root/cert
+    if [ ! -d "$certPath" ]; then
+        mkdir $certPath
+    else
+        rm -rf $certPath
+        mkdir $certPath
+    fi
+    #get the domain here,and we need verify it
+    local domain=""
+    read -p "Please enter your domain name:" domain
+    LOGD "The domain name you entered is: ${domain}, Verifying the validity of the domain name..."
+    #here we need to judge whether there exists cert already
+    local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
+    if [ ${currentCert} == ${domain} ]; then
+        local certInfo=$(~/.acme.sh/acme.sh --list)
+        LOGE "Domain name validation failed, The current environment already has a corresponding domain name certificate, Cannot reapply, Current certificate details:"
+        LOGI "$certInfo"
+        exit 1
+    else
+        LOGI "Certificate validity verification passed..."
+    fi
+    #get needed port here
+    local WebPort=80
+    read -p "Please enter the port you wish to use, If you press Enter, the default port 80 will be used:" WebPort
+    if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
+        LOGE "port of your choice ${WebPort} is an invalid value, Will use the default port 80 to apply"
+    fi
+    LOGI "Will use ${WebPort} to apply for a certificate, Make sure the port is open..."
+    #NOTE:This should be handled by user
+    #open the port and kill the occupied progress
+    ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+    ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --httpport ${WebPort}
+    if [ $? -ne 0 ]; then
+        LOGE "The certificate application failed, please refer to the error message for the reason"
+        exit 1
+    else
+        LOGE "The certificate application is successful, and the certificate installation starts..."
+    fi
+    #install cert
+    ~/.acme.sh/acme.sh --installcert -d ${domain} --ca-file /root/cert/ca.cer \
+    --cert-file /root/cert/${domain}.cer --key-file /root/cert/${domain}.key \
+    --fullchain-file /root/cert/fullchain.cer
+
+    if [ $? -ne 0 ]; then
+        LOGE "Certificate installation failed, script exit..."
+        exit 1
+    else
+        LOGI "The certificate is successfully installed, and automatic update is enabled..."
+    fi
+    ~/.acme.sh/acme.sh --upgrade --auto-upgrade
+    if [ $? -ne 0 ]; then
+        LOGE "Auto update setup failed, script exited"
+        ls -lah cert
+        chmod 755 $certPath
+        exit 1
+    else
+        LOGI "The certificate has been installed and automatic renewal has been enabled, the specific information is as follows"
+        ls -lah cert
+        chmod 755 $certPath
+    fi
+
+}
+
+#method for DNS API mode
+ssl_cert_issue_by_cloudflare() {
     echo -E ""
     LOGD "******Instructions for use******"
     LOGI "This Acme script requires the following data:"
