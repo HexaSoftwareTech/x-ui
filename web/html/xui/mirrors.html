@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+{{template "head" .}}
+<style>
+    @media (min-width: 769px) {
+        .ant-layout-content {
+            margin: 24px 16px;
+        }
+    }
+
+    .ant-col-sm-24 {
+        margin-top: 10px;
+    }
+</style>
+<body>
+<a-layout id="app" v-cloak>
+    {{ template "commonSider" . }}
+    <a-layout id="content-layout">
+        <a-layout-content>
+            <a-spin :spinning="spinning" :delay="500" tip="loading">
+                <transition name="list" appear>
+                    <a-card hoverable>
+                        <div slot="title">
+                            <a-button type="primary" icon="plus" @click="openAddMirror"></a-button>
+                        </div>
+                        <a-table :columns="columns" :row-key="mirror => mirror.id"
+                                 :data-source="mirrors"
+                                 :loading="spinning" :scroll="{ x: 1500 }"
+                                 :pagination="false"
+                                 style="margin-top: 20px"
+                                 @change="() => getMirrors()">
+                        </a-table>
+                    </a-card>
+                </transition>
+            </a-spin>
+        </a-layout-content>
+    </a-layout>
+</a-layout>
+{{template "js" .}}
+<script>
+
+    const columns = [{
+        title: "ip",
+        align: 'center',
+        dataIndex: "ip",
+        width: 30}, {
+        title: 'port',
+        align: 'center',
+        dataIndex: "port",
+        width: 60
+    }];
+    const app = new Vue({
+        delimiters: ['[[', ']]'],
+        el: '#app',
+        data: {
+            siderDrawer,
+            spinning: false,
+            mirrors: []
+        },
+        methods: {
+            loading(spinning = true) {
+                this.spinning = spinning;
+            },
+            async getMirrors() {
+                this.loading();
+                const msg = await HttpUtil.newGet('/xui/api/mirrors');
+                this.loading(false);
+                if (!msg.success) {
+                    return;
+                }
+                this.setMirrors(msg.obj);
+            },
+            setMirrors(mirrors) {
+                for (const mirror of mirrors) {
+                    if(this.mirrors.find((e)=>e.id===mirror.id)===undefined) {
+                        const dbMirror = new Mirror({port: mirror.port, ip: mirror.ip, id: mirror.id});
+                        this.mirrors.push(dbMirror);
+                    }
+                }
+            },
+            openAddMirror() {
+                mirrorModal.show({
+                    title: 'add mirror',
+                    okText: 'add',
+                    cancelText: '{{ i18n "close" }}',
+                    confirm: async (mirror) => {
+                        mirrorModal.loading();
+                        await this.addMirror(mirror);
+                        mirrorModal.close();
+                    },
+                });
+            },
+            async addMirror(mirror) {
+
+                const data = Object.assign({
+                    ip: mirror.ip.toString(),
+                    port: parseInt(mirror.port)
+                })
+                await this.submit('/xui/api/mirrors', data, mirrorModal,'mirror added');
+
+            },
+            async submit(url, data, modal,message) {
+                const msg = await HttpUtil.newPostWithModal(url, JSON.parse(JSON.stringify(data)), modal,{headers: {'Content-Type': 'application/json'}},message);
+                if (msg.success) {
+                    await this.getMirrors();
+                }
+            },
+        },
+        mounted() {
+            this.getMirrors();
+        },
+    });
+
+
+</script>
+
+{{template "mirrorModal"}}
+{{template "promptModal"}}
+
+
+</body>
+
+</html>

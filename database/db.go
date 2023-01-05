@@ -48,6 +48,10 @@ func initClientTraffic() error {
 	return db.AutoMigrate(&xray.ClientTraffic{})
 }
 
+func initMirrors() error {
+	return db.AutoMigrate(&model.Mirror{})
+}
+
 func InitDB(dbPath string) error {
 	dir := path.Dir(dbPath)
 	err := os.MkdirAll(dir, fs.ModeDir)
@@ -91,7 +95,12 @@ func InitDB(dbPath string) error {
 	if err != nil {
 		return err
 	}
-	
+
+	err = initMirrors()
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

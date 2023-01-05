@@ -1,4 +1,5 @@
 class HttpUtil {
+
     static _handleMsg(msg) {
         if (!(msg instanceof Msg)) {
             return;
@@ -10,6 +11,25 @@ class HttpUtil {
             Vue.prototype.$message.success(msg.msg);
         } else {
             Vue.prototype.$message.error(msg.msg);
+        }
+    }
+
+    static _getErrorMessage(e) {
+
+        const status = e.response.status;
+        const data = e.response.data;
+
+        if (300 <= status && status <= 399) {
+            return new Msg(false, 'unknown data:' + data.error.toString());
+
+        } else if (400 <= status && status <= 499) {
+            return new Msg(false, 'bad request:' + data?.error.toString());
+
+        } else if (500 <= status) {
+            return new Msg(false, 'server error');
+
+        } else {
+            return new Msg(false, 'unknown data:' + data.toString());
         }
     }
 
@@ -26,6 +46,123 @@ class HttpUtil {
         } else {
             return new Msg(false, 'unknown data:', data);
         }
+    }
+
+    static _respNewApiToMsg(resp, message) {
+        const data = resp.data.data;
+        const status = resp.status;
+
+        if (200 <= status && status <= 299) {
+            if (data == null) {
+                return new Msg(true,message);
+            } else {
+                return new Msg(true, message, data);
+            }
+        }
+    }
+
+    static async newPost(url, data, options,message) {
+        let msg;
+        try {
+            const resp = await axios.post(url, data, options);
+            msg = this._respNewApiToMsg(resp,message);
+        } catch (e) {
+            msg = this._getErrorMessage(e)
+        }
+        this._handleMsg(msg);
+        return msg;
+    }
+
+    static async newPostWithModal(url, data, modal, options,message) {
+        if (modal) {
+            modal.loading(true);
+        }
+        const msg = await this.newPost(url, data, options,message);
+        if (modal) {
+            modal.loading(false);
+            if (msg instanceof Msg && msg.success) {
+                modal.close();
+            }
+        }
+        return msg;
+    }
+
+    static async newGet(url, data, options,message) {
+        let msg;
+        try {
+            const resp = await axios.get(url, data, options);
+            msg = this._respNewApiToMsg(resp,message);
+        } catch (e) {
+            msg = this._getErrorMessage(e)
+        }
+        this._handleMsg(msg);
+        return msg;
+    }
+
+    static async newGetWithModal(url, data, modal, options,message) {
+        if (modal) {
+            modal.loading(true);
+        }
+        const msg = await this.newGet(url, data, options,message);
+        if (modal) {
+            modal.loading(false);
+            if (msg instanceof Msg && msg.success) {
+                modal.close();
+            }
+        }
+        return msg;
+    }
+
+    static async newPut(url, data, options,message) {
+        let msg;
+        try {
+            const resp = await axios.put(url, data, options);
+            msg = this._respNewApiToMsg(resp,message);
+        } catch (e) {
+            msg = this._getErrorMessage(e)
+        }
+        this._handleMsg(msg);
+        return msg;
+    }
+
+    static async newPutWithModal(url, data, modal, options,message) {
+        if (modal) {
+            modal.loading(true);
+        }
+        const msg = await this.newPut(url, data, options,message);
+        if (modal) {
+            modal.loading(false);
+            if (msg instanceof Msg && msg.success) {
+                modal.close();
+            }
+        }
+        return msg;
+    }
+
+    static async newDelete(url, data, options,message) {
+        let msg;
+        try {
+            const resp = await axios.delete(url, data, options);
+            msg = this._respNewApiToMsg(resp,message);
+        } catch (e) {
+            msg = this._getErrorMessage(e)
+        }
+        this._handleMsg(msg);
+        return msg;
+    }
+
+    static async newDeleteWithModal(url, data, modal, options,message) {
+        if (modal) {
+            modal.loading(true);
+        }
+        const msg = await this.newDelete(url, data, options,message);
+        if (modal) {
+            modal.loading(false);
+            if (msg instanceof Msg && msg.success) {
+                modal.close();
+            }
+        }
+        return msg;
     }
 
     static async get(url, data, options) {
@@ -52,11 +189,11 @@ class HttpUtil {
         return msg;
     }
 
-    static async postWithModal(url, data, modal) {
+    static async postWithModal(url, data, modal, options) {
         if (modal) {
             modal.loading(true);
         }
-        const msg = await this.post(url, data);
+        const msg = await this.post(url, data, options);
         if (modal) {
             modal.loading(false);
             if (msg instanceof Msg && msg.success) {

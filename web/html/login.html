@@ -110,7 +110,7 @@
         methods: {
             async login() {
                 this.loading = true;
-                const msg = await HttpUtil.post('/login', this.user);
+                const msg = await HttpUtil.newPost('/login', this.user);
                 this.loading = false;
                 if (msg.success) {
                     location.href = basePath + 'xui/';

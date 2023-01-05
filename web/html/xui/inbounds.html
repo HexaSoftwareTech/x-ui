@@ -20,7 +20,8 @@
             <a-spin :spinning="spinning" :delay="500" tip="loading">
                 <transition name="list" appear>
                     <a-tag v-if="false" color="red" style="margin-bottom: 10px">
-                        Please go to the panel settings as soon as possible to modify the username and password, otherwise there may be a risk of leaking account information
+                        Please go to the panel settings as soon as possible to modify the username and password,
+                        otherwise there may be a risk of leaking account information
                     </a-tag>
                 </transition>
                 <transition name="list" appear>
@@ -46,7 +47,7 @@
                         <div slot="title">
                             <a-button type="primary" icon="plus" @click="openAddInbound"></a-button>
                         </div>
-<!--                        <a-input v-model="searchKey" placeholder="搜索" autofocus style="max-width: 300px"></a-input>-->
+                        <!--                        <a-input v-model="searchKey" placeholder="搜索" autofocus style="max-width: 300px"></a-input>-->
                         <a-table :columns="columns" :row-key="dbInbound => dbInbound.id"
                                  :data-source="dbInbounds"
                                  :loading="spinning" :scroll="{ x: 1500 }"
@@ -66,7 +67,8 @@
                                             {{ i18n "edit" }}
                                         </a-menu-item>
                                         <a-menu-item key="resetTraffic">
-                                            <a-icon type="retweet"></a-icon> {{ i18n "pages.inbounds.resetTraffic" }}
+                                            <a-icon type="retweet"></a-icon>
+                                            {{ i18n "pages.inbounds.resetTraffic" }}
                                         </a-menu-item>
                                         <a-menu-item key="delete">
                                             <span style="color: #FF4D4F">
@@ -80,9 +82,12 @@
                                 <a-tag color="blue">[[ dbInbound.protocol ]]</a-tag>
                             </template>
                             <template slot="traffic" slot-scope="text, dbInbound">
-                                <a-tag color="blue">[[ sizeFormat(dbInbound.up) ]] / [[ sizeFormat(dbInbound.down) ]]</a-tag>
+                                <a-tag color="blue">[[ sizeFormat(dbInbound.up) ]] / [[ sizeFormat(dbInbound.down) ]]
+                                </a-tag>
                                 <template v-if="dbInbound.total > 0">
-                                    <a-tag v-if="dbInbound.up + dbInbound.down < dbInbound.total" color="cyan">[[ sizeFormat(dbInbound.total) ]]</a-tag>
+                                    <a-tag v-if="dbInbound.up + dbInbound.down < dbInbound.total" color="cyan">[[
+                                        sizeFormat(dbInbound.total) ]]
+                                    </a-tag>
                                     <a-tag v-else color="red">[[ sizeFormat(dbInbound.total) ]]</a-tag>
                                 </template>
                                 <a-tag v-else color="green">{{ i18n "unlimited" }}</a-tag>
@@ -91,7 +96,8 @@
                                 <a-button type="link" @click="showInfo(dbInbound)">{{ i18n "check" }}</a-button>
                             </template>
                             <template slot="stream" slot-scope="text, dbInbound, index">
-                                <template v-if="dbInbound.isVMess || dbInbound.isVLess || dbInbound.isTrojan || dbInbound.isSS">
+                                <template
+                                        v-if="dbInbound.isVMess || dbInbound.isVLess || dbInbound.isTrojan || dbInbound.isSS">
                                     <a-tag color="green">[[ inbounds[index].stream.network ]]</a-tag>
                                     <a-tag v-if="inbounds[index].stream.isTls" color="blue">tls</a-tag>
                                     <a-tag v-if="inbounds[index].stream.isXTls" color="blue">xtls</a-tag>
@@ -101,13 +107,13 @@
                             <template slot="enable" slot-scope="text, dbInbound">
                                 <a-switch v-model="dbInbound.enable" @change="switchEnable(dbInbound)"></a-switch>
                             </template>
-                            <template slot="expiryTime" slot-scope="text, dbInbound">
-                                <template v-if="dbInbound.expiryTime > 0">
+                            <template slot="expiry_time" slot-scope="text, dbInbound">
+                                <template v-if="dbInbound.expiry_time > 0">
                                     <a-tag v-if="dbInbound.isExpiry" color="red">
-                                        [[ DateUtil.formatMillis(dbInbound.expiryTime) ]]
+                                        [[ DateUtil.formatMillis(dbInbound.expiry_time) ]]
                                     </a-tag>
                                     <a-tag v-else color="blue">
-                                        [[ DateUtil.formatMillis(dbInbound.expiryTime) ]]
+                                        [[ DateUtil.formatMillis(dbInbound.expiry_time) ]]
                                     </a-tag>
                                 </template>
                                 <a-tag v-else color="green">{{ i18n "indefinitely" }}</a-tag>
@@ -126,12 +132,12 @@
         title: '{{ i18n "pages.inbounds.operate" }}',
         align: 'center',
         width: 30,
-        scopedSlots: { customRender: 'action' },
+        scopedSlots: {customRender: 'action'},
     }, {
         title: '{{ i18n "pages.inbounds.enable" }}',
         align: 'center',
         width: 40,
-        scopedSlots: { customRender: 'enable' },
+        scopedSlots: {customRender: 'enable'},
     }, {
         title: "Id",
         align: 'center',
@@ -146,7 +152,7 @@
         title: '{{ i18n "pages.inbounds.protocol" }}',
         align: 'center',
         width: 60,
-        scopedSlots: { customRender: 'protocol' },
+        scopedSlots: {customRender: 'protocol'},
     }, {
         title: '{{ i18n "pages.inbounds.port" }}',
         align: 'center',
@@ -156,22 +162,22 @@
         title: '{{ i18n "pages.inbounds.traffic" }}↑|↓',
         align: 'center',
         width: 150,
-        scopedSlots: { customRender: 'traffic' },
+        scopedSlots: {customRender: 'traffic'},
     }, {
         title: '{{ i18n "pages.inbounds.details" }}',
         align: 'center',
         width: 40,
-        scopedSlots: { customRender: 'settings' },
+        scopedSlots: {customRender: 'settings'},
     }, {
         title: '{{ i18n "pages.inbounds.transportConfig" }}',
         align: 'center',
         width: 60,
-        scopedSlots: { customRender: 'stream' },
+        scopedSlots: {customRender: 'stream'},
     }, {
         title: '{{ i18n "pages.inbounds.expireDate" }}',
         align: 'center',
         width: 80,
-        scopedSlots: { customRender: 'expiryTime' },
+        scopedSlots: {customRender: 'expiry_time'},
     }];
 
     const app = new Vue({
@@ -185,12 +191,12 @@
             searchKey: '',
         },
         methods: {
-            loading(spinning=true) {
+            loading(spinning = true) {
                 this.spinning = spinning;
             },
             async getDBInbounds() {
                 this.loading();
-                const msg = await HttpUtil.post('/xui/inbound/list');
+                const msg = await HttpUtil.newGet('/xui/api/inbounds', undefined, {});
                 this.loading(false);
                 if (!msg.success) {
                     return;
@@ -270,16 +276,16 @@
                     total: dbInbound.total,
                     remark: dbInbound.remark,
                     enable: dbInbound.enable,
-                    expiryTime: dbInbound.expiryTime,
+                    expiry_time: dbInbound.expiry_time,
 
                     listen: inbound.listen,
                     port: inbound.port,
                     protocol: inbound.protocol,
-                    settings: inbound.settings.toString(),
-                    streamSettings: inbound.stream.toString(),
-                    sniffing: inbound.canSniffing() ? inbound.sniffing.toString() : '{}',
+                    settings: btoa(inbound.settings.toString()),
+                    stream_settings: btoa(inbound.stream.toString()),
+                    sniffing: btoa(inbound.canSniffing() ? inbound.sniffing.toString() : '{}'),
                 };
-                await this.submit('/xui/inbound/add', data, inModal);
+                await this.submit('/xui/api/inbounds', data, inModal,"post","inbound added");
             },
             async updateInbound(inbound, dbInbound) {
                 const data = {
@@ -288,16 +294,16 @@
                     total: dbInbound.total,
                     remark: dbInbound.remark,
                     enable: dbInbound.enable,
-                    expiryTime: dbInbound.expiryTime,
+                    expiry_time: dbInbound.expiry_time,
 
                     listen: inbound.listen,
                     port: inbound.port,
                     protocol: inbound.protocol,
-                    settings: inbound.settings.toString(),
-                    streamSettings: inbound.stream.toString(),
-                    sniffing: inbound.canSniffing() ? inbound.sniffing.toString() : '{}',
+                    settings: btoa(inbound.settings.toString()),
+                    stream_settings: btoa(inbound.stream.toString()),
+                    sniffing: inbound.canSniffing() ? btoa(inbound.sniffing.toString()) : btoa('{}'),
                 };
-                await this.submit(`/xui/inbound/update/${dbInbound.id}`, data, inModal);
+                await this.submit(`/xui/api/inbounds/${dbInbound.id}`, data, inModal, "put","inbound updated");
             },
             resetTraffic(dbInbound) {
                 this.$confirm({
@@ -319,7 +325,7 @@
                     content: '{{ i18n "pages.inbounds.deleteInboundContent"}}',
                     okText: '{{ i18n "delete"}}',
                     cancelText: '{{ i18n "cancel"}}',
-                    onOk: () => this.submit('/xui/inbound/del/' + dbInbound.id),
+                    onOk: () => this.submit('/xui/api/inbounds/' + dbInbound.id, undefined, undefined, "delete",'inbound deleted successfully'),
                 });
             },
             showQrcode(dbInbound) {
@@ -330,10 +336,37 @@
                 infoModal.show(dbInbound);
             },
             switchEnable(dbInbound) {
-                this.submit(`/xui/inbound/update/${dbInbound.id}`, dbInbound);
+
+                this.submit(`/xui/api/inbounds/${dbInbound.id}`, {
+                    ...dbInbound,
+                    settings: btoa(dbInbound.settings.toString()),
+                    stream_settings: btoa(dbInbound.stream_settings.toString()),
+                    sniffing: btoa(dbInbound.sniffing.toString()),
+                }, undefined, "put","inbound updated");
             },
-            async submit(url, data, modal) {
-                const msg = await HttpUtil.postWithModal(url, data, modal);
+            async submit(url, data, modal, method = 'post',message) {
+                let msg;
+                switch (method) {
+                    case "post":
+                        msg = await HttpUtil.newPostWithModal(url, data, modal,undefined,message);
+                        break;
+
+                    case "get":
+                        msg = await HttpUtil.newGetWithModal(url, data, modal,undefined,message);
+                        break;
+
+                    case "delete":
+                        msg = await HttpUtil.newDeleteWithModal(url, data, modal,undefined,message);
+                        break;
+
+                    case "put":
+                        msg = await HttpUtil.newPutWithModal(url, data, modal,undefined,message);
+                        break;
+
+                    default:
+                        break;
+
+                }
                 if (msg.success) {
                     await this.getDBInbounds();
                 }

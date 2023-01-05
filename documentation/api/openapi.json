@@ -1,0 +1,727 @@
+{
+	"openapi": "3.0.3",
+	"info": {
+		"title": "Title",
+		"description": "Title",
+		"version": "1.0.0"
+	},
+	"servers": [
+		{
+			"url": "http://localhost:54321"
+		}
+	],
+	"paths": {
+		"/login": {
+			"parameters": [
+				{
+					"in": "header",
+					"name": "Accept-Language",
+					"schema": {
+						"type": "string",
+						"nullable": false,
+						"example": "en"
+					}
+				}
+			],
+			"post": {
+				"tags": [
+					"Auth"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/x-www-form-urlencoded": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequestBody"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Message"
+								}
+							}
+						},
+						"description": "login success message",
+						"headers": {
+							"Set-Cookie": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"422": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Message"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/xui/api/inbounds": {
+			"get": {
+				"tags": [
+					"Inbound"
+				],
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/ListResponse"
+										},
+										{
+											"properties": {
+												"data": {
+													"type": "array",
+													"items": {
+														"$ref": "#/components/schemas/InboundResponse"
+													}
+												}
+											}
+										}
+									]
+								}
+							}
+						},
+						"description": "list of inbounds"
+					},
+					"401": {
+						"$ref": "#/components/responses/Unauthenticated"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				]
+			},
+			"post": {
+				"tags": [
+					"Inbound"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateInboundRequestBody"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InboundResponse"
+								}
+							}
+						},
+						"description": "created inbound"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				]
+			}
+		},
+		"/xui/api/inbounds/{inboundId}": {
+			"parameters": [
+				{
+					"in": "path",
+					"name": "inboundId",
+					"allowEmptyValue": false,
+					"schema": {
+						"type": "integer",
+						"nullable": false,
+						"minimum": 1
+					},
+					"required": true
+				}
+			],
+			"get": {
+				"tags": [
+					"Inbound"
+				],
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InboundResponse"
+								}
+							}
+						},
+						"description": "returns specified inbound"
+					},
+					"401": {
+						"$ref": "#/components/responses/Unauthenticated"
+					},
+					"404": {
+						"$ref": "#/components/responses/NotFound"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				]
+			},
+			"put": {
+				"tags": [
+					"Inbound"
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateInboundRequestBody"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InboundResponse"
+								}
+							}
+						},
+						"description": "updated value of inbound"
+					},
+					"401": {
+						"$ref": "#/components/responses/Unauthenticated"
+					},
+					"404": {
+						"$ref": "#/components/responses/NotFound"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				]
+			},
+			"delete": {
+				"tags": [
+					"Inbound"
+				],
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Message"
+								}
+							}
+						},
+						"description": "delete success message"
+					},
+					"401": {
+						"$ref": "#/components/responses/Unauthenticated"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				]
+			}
+		},
+		"/xui/api/mirrors": {
+			"get": {
+				"tags": [
+					"Mirror"
+				],
+				"responses": {
+					"200": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"allOf": [
+										{
+											"$ref": "#/components/schemas/ListResponse"
+										},
+										{
+											"properties": {
+												"data": {
+													"type": "array",
+													"items": {
+														"$ref": "#/components/schemas/MirrorResponse"
+													}
+												}
+											}
+										}
+									]
+								}
+							}
+						},
+						"description": "list of inbounds"
+					},
+					"401": {
+						"$ref": "#/components/responses/Unauthenticated"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				]
+			},
+			"post": {
+				"tags": [
+					"Mirror"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateMirrorRequestBody"
+							}
+						}
+					}
+				},
+				"responses": {
+					"201": {
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MirrorResponse"
+								}
+							}
+						},
+						"description": ""
+					},
+					"401": {
+						"$ref": "#/components/responses/Unauthenticated"
+					}
+				},
+				"security": [
+					{
+						"cookieAuth": []
+					}
+				]
+			}
+		}
+	},
+	"components": {
+		"schemas": {
+			"ListResponse": {
+				"type": "object",
+				"properties": {
+					"data": {
+						"description": "items in the list",
+						"type": "array",
+						"nullable": false
+					}
+				},
+				"required": [
+					"data"
+				]
+			},
+			"InboundResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "integer",
+						"nullable": false
+					},
+					"user_id": {
+						"type": "integer",
+						"nullable": false
+					},
+					"up": {
+						"type": "integer",
+						"nullable": false
+					},
+					"down": {
+						"type": "integer",
+						"nullable": false
+					},
+					"total": {
+						"type": "integer",
+						"nullable": false
+					},
+					"remark": {
+						"type": "string",
+						"nullable": false
+					},
+					"enable": {
+						"type": "boolean",
+						"nullable": false
+					},
+					"expiry_time": {
+						"type": "integer",
+						"nullable": false,
+						"format": "timestamp"
+					},
+					"listen": {
+						"type": "string",
+						"nullable": false
+					},
+					"port": {
+						"type": "integer",
+						"nullable": false
+					},
+					"protocol": {
+						"$ref": "#/components/schemas/Protocols"
+					},
+					"settings": {
+						"type": "string",
+						"nullable": false,
+						"format": "json"
+					},
+					"stream_settings": {
+						"type": "string",
+						"nullable": false,
+						"format": "json"
+					},
+					"tag": {
+						"type": "string",
+						"nullable": false
+					},
+					"sniffing": {
+						"type": "string",
+						"nullable": false,
+						"format": "json"
+					},
+					"client_statistics": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/ClientStatisticsResponse"
+						}
+					}
+				},
+				"required": [
+					"id",
+					"user_id",
+					"up",
+					"down",
+					"total",
+					"remark",
+					"enable",
+					"expiry_time",
+					"listen",
+					"port",
+					"protocol",
+					"settings",
+					"stream_settings",
+					"tag",
+					"sniffing",
+					"client_statistics"
+				]
+			},
+			"Protocols": {
+				"type": "string",
+				"enum": [
+					"vmess",
+					"vless",
+					"trojan",
+					"shadowsocks",
+					"Dokodemo-door",
+					"socks",
+					"http"
+				]
+			},
+			"ClientStatisticsResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "integer",
+						"nullable": false
+					},
+					"enable": {
+						"type": "boolean",
+						"nullable": false
+					},
+					"email": {
+						"type": "string",
+						"nullable": false
+					},
+					"up": {
+						"type": "integer",
+						"nullable": false
+					},
+					"down": {
+						"type": "integer",
+						"nullable": false
+					},
+					"expiry_time": {
+						"type": "integer",
+						"nullable": false
+					},
+					"total": {
+						"type": "integer",
+						"nullable": false
+					}
+				},
+				"required": [
+					"id",
+					"enable",
+					"email",
+					"up",
+					"down",
+					"expiry_time",
+					"total"
+				]
+			},
+			"MirrorResponse": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "integer",
+						"nullable": false
+					},
+					"ip": {
+						"type": "string",
+						"nullable": false,
+						"format": "ip"
+					},
+					"port": {
+						"type": "integer",
+						"nullable": false
+					}
+				},
+				"required": [
+					"id",
+					"ip",
+					"port"
+				]
+			},
+			"Message": {
+				"type": "object",
+				"properties": {
+					"message": {
+						"description": "message text",
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				]
+			},
+			"CreateInboundRequestBody": {
+				"type": "object",
+				"properties": {
+					"total": {
+						"type": "integer",
+						"nullable": true,
+						"description": "on null value is set to 0"
+					},
+					"remark": {
+						"type": "string",
+						"nullable": true
+					},
+					"enable": {
+						"type": "boolean",
+						"nullable": true,
+						"description": "on null value is set to true"
+					},
+					"expiry_time": {
+						"type": "integer",
+						"nullable": true,
+						"format": "timestamp",
+						"description": "on null value is set to 0"
+					},
+					"listen": {
+						"type": "string",
+						"nullable": true,
+						"format": "ip"
+					},
+					"port": {
+						"type": "integer",
+						"nullable": false
+					},
+					"protocol": {
+						"$ref": "#/components/schemas/Protocols"
+					},
+					"settings": {
+						"type": "string",
+						"format": "base64",
+						"nullable": false
+					},
+					"stream_settings": {
+						"type": "string",
+						"format": "base64",
+						"nullable": false
+					},
+					"sniffing": {
+						"type": "string",
+						"format": "base64",
+						"nullable": false
+					}
+				},
+				"required": [
+					"total",
+					"remark",
+					"enable",
+					"expiry_time",
+					"listen",
+					"port",
+					"protocol",
+					"settings",
+					"stream_settings",
+					"sniffing"
+				]
+			},
+			"UpdateInboundRequestBody": {
+				"type": "object",
+				"properties": {
+					"total": {
+						"type": "integer",
+						"nullable": true,
+						"description": "on null value is set to 0"
+					},
+					"remark": {
+						"type": "string",
+						"nullable": true
+					},
+					"enable": {
+						"type": "boolean",
+						"nullable": true,
+						"description": "on null value is set to true"
+					},
+					"expiry_time": {
+						"type": "integer",
+						"nullable": true,
+						"format": "timestamp",
+						"description": "on null value is set to 0"
+					},
+					"listen": {
+						"type": "string",
+						"nullable": true,
+						"format": "ip"
+					},
+					"port": {
+						"type": "integer",
+						"nullable": false
+					},
+					"protocol": {
+						"$ref": "#/components/schemas/Protocols"
+					},
+					"settings": {
+						"type": "string",
+						"format": "base64",
+						"nullable": false
+					},
+					"stream_settings": {
+						"type": "string",
+						"format": "base64",
+						"nullable": false
+					},
+					"sniffing": {
+						"type": "string",
+						"format": "base64",
+						"nullable": false
+					}
+				},
+				"required": [
+					"total",
+					"remark",
+					"enable",
+					"expiry_time",
+					"listen",
+					"port",
+					"protocol",
+					"settings",
+					"stream_settings",
+					"sniffing"
+				]
+			},
+			"LoginRequestBody": {
+				"type": "object",
+				"properties": {
+					"username": {
+						"type": "string",
+						"nullable": false
+					},
+					"password": {
+						"type": "string",
+						"nullable": false,
+						"format": "password"
+					}
+				},
+				"required": [
+					"username",
+					"password"
+				]
+			},
+			"CreateMirrorRequestBody": {
+				"type": "object",
+				"properties": {
+					"ip": {
+						"type": "string",
+						"nullable": false,
+						"format": "ip"
+					},
+					"port": {
+						"type": "integer",
+						"nullable": false
+					}
+				},
+				"required": [
+					"ip",
+					"port"
+				]
+			}
+		},
+		"securitySchemes": {
+			"cookieAuth": {
+				"type": "apiKey",
+				"in": "cookie",
+				"name": "session"
+			}
+		},
+		"responses": {
+			"Unauthenticated": {
+				"description": "user is unauthenticated (needs login)",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/Message"
+						}
+					}
+				}
+			},
+			"Unauthorized": {
+				"description": "user is unauthorized to access the resource",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/Message"
+						}
+					}
+				}
+			},
+			"NotFound": {
+				"description": "resource not found",
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/Message"
+						}
+					}
+				}
+			}
+		}
+	}
+}

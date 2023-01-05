@@ -1,9 +1,11 @@
 {{define "inboundInfoModal"}}
 {{template "component/inboundInfo"}}
-<a-modal id="inbound-info-modal" v-model="infoModal.visible" title='{{ i18n "pages.inbounds.details"}}' @ok="infoModal.ok"
+<a-modal id="inbound-info-modal" v-model="infoModal.visible" title='{{ i18n "pages.inbounds.details"}}'
+         @ok="infoModal.ok"
          :closable="true" :mask-closable="true"
-         ok-text='{{ i18n "pages.inbounds.copyLink"}}' cancel-text='{{ i18n "close" }}' :ok-button-props="infoModal.okBtnPros">
-    <inbound-info :db-inbound="dbInbound" :inbound="inbound"></inbound-info>
+         ok-text='{{ i18n "pages.inbounds.copyLink"}}' cancel-text='{{ i18n "close" }}'
+         :ok-button-props="infoModal.okBtnPros">
+    <inbound-info :db-inbound="dbInbound" :inbound="inbound" @copy="copyToClip"></inbound-info>
 </a-modal>
 <script>
 
@@ -11,32 +13,16 @@
         visible: false,
         inbound: new Inbound(),
         dbInbound: new DBInbound(),
-        clipboard: null,
         okBtnPros: {
             attrs: {
                 id: "inbound-info-modal-ok-btn",
-                style: "",
+                style: "display: none",
             },
         },
         show(dbInbound) {
             this.inbound = dbInbound.toInbound();
             this.dbInbound = new DBInbound(dbInbound);
             this.visible = true;
-
-            if (dbInbound.hasLink()) {
-                this.okBtnPros.attrs.style = "";
-            } else {
-                this.okBtnPros.attrs.style = "display: none";
-            }
-
-            if (this.clipboard == null) {
-                infoModalApp.$nextTick(() => {
-                    this.clipboard = new ClipboardJS(`#${this.okBtnPros.attrs.id}`, {
-                        text: () => this.dbInbound.genLink(),
-                    });
-                    this.clipboard.on('success', () => app.$message.success('{{ i18n "copySuccess" }}'));
-                });
-            }
         },
         close() {
             infoModal.visible = false;
@@ -48,6 +34,7 @@
         el: '#inbound-info-modal',
         data: {
             infoModal,
+            clipboard: null,
             get dbInbound() {
                 return this.infoModal.dbInbound;
             },
@@ -55,6 +42,19 @@
                 return this.infoModal.inbound;
             }
         },
+        methods: {
+            copyToClip(clientId) {
+                infoModalApp.$nextTick(() => {
+
+                    this.clipboard = new ClipboardJS('.ant-btn-primary', {
+                        text: () => this.dbInbound.genLink(clientId),
+                    });
+                    this.clipboard.on('success', () => app.$message.success('{{ i18n "copySuccess" }}'));
+                })
+            }
+        }
+
+
     });
 
 </script>

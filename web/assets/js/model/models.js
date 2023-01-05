@@ -35,13 +35,13 @@ class DBInbound {
         this.total = 0;
         this.remark = "";
         this.enable = true;
-        this.expiryTime = 0;
+        this.expiry_time = 0;
 
         this.listen = "";
         this.port = 0;
         this.protocol = "";
         this.settings = "";
-        this.streamSettings = "";
+        this.stream_settings = "";
         this.tag = "";
         this.sniffing = "";
         this.clientStats = ""
@@ -92,22 +92,22 @@ class DBInbound {
     }
 
     get _expiryTime() {
-        if (this.expiryTime === 0) {
+        if (this.expiry_time === 0) {
             return null;
         }
-        return moment(this.expiryTime);
+        return moment(this.expiry_time);
     }
 
     set _expiryTime(t) {
         if (t == null) {
-            this.expiryTime = 0;
+            this.expiry_time = 0;
         } else {
-            this.expiryTime = t.valueOf();
+            this.expiry_time = t.valueOf();
         }
     }
 
     get isExpiry() {
-        return this.expiryTime < new Date().getTime();
+        return this.expiry_time < new Date().getTime();
     }
 
     toInbound() {
@@ -117,8 +117,8 @@ class DBInbound {
         }
 
         let streamSettings = {};
-        if (!ObjectUtil.isEmpty(this.streamSettings)) {
-            streamSettings = JSON.parse(this.streamSettings);
+        if (!ObjectUtil.isEmpty(this.stream_settings)) {
+            streamSettings = JSON.parse(this.stream_settings);
         }
 
         let sniffing = {};
@@ -151,9 +151,9 @@ class DBInbound {
         }
     }
 
-    genLink() {
+    genLink(index) {
         const inbound = this.toInbound();
-        return inbound.genLink(this.address, this.remark);
+        return inbound.genLink(this.address, this.remark,index);
     }
 }
 

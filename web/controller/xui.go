@@ -7,7 +7,6 @@ import (
 type XUIController struct {
 	BaseController
 
-	inboundController *InboundController
 	settingController *SettingController
 }
 
@@ -18,14 +17,15 @@ func NewXUIController(g *gin.RouterGroup) *XUIController {
 }
 
 func (a *XUIController) initRouter(g *gin.RouterGroup) {
+
 	g = g.Group("/xui")
 	g.Use(a.checkLogin)
 
 	g.GET("/", a.index)
 	g.GET("/inbounds", a.inbounds)
 	g.GET("/setting", a.setting)
+	g.GET("/mirrors", a.mirrors)
 
-	a.inboundController = NewInboundController(g)
 	a.settingController = NewSettingController(g)
 }
 
@@ -39,4 +39,8 @@ func (a *XUIController) inbounds(c *gin.Context) {
 
 func (a *XUIController) setting(c *gin.Context) {
 	html(c, "setting.html", "pages.setting.title", nil)
+}
+
+func (a *XUIController) mirrors(c *gin.Context) {
+	html(c, "mirrors.html", "pages.inbounds.title", nil)
 }

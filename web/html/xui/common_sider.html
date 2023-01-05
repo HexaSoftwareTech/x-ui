@@ -3,10 +3,21 @@
     <a-icon type="dashboard"></a-icon>
     <span>{{ i18n "menu.dashboard"}}</span>
 </a-menu-item>
+
+
 <a-menu-item key="{{ .base_path }}xui/inbounds">
     <a-icon type="user"></a-icon>
     <span>{{ i18n "menu.inbounds"}}</span>
 </a-menu-item>
+
+
+
+<a-menu-item key="{{ .base_path }}xui/mirrors">
+    <a-icon type="link"></a-icon>
+    <span>mirrors</span>
+</a-menu-item>
+
+
 <a-menu-item key="{{ .base_path }}xui/setting">
     <a-icon type="setting"></a-icon>
     <span>{{ i18n "menu.setting"}}</span>
@@ -15,16 +26,14 @@
 <!--    <a-icon type="laptop"></a-icon>-->
 <!--    <span>客户端</span>-->
 <!--</a-menu-item>-->
-<a-sub-menu>
-    <template slot="title">
-        <a-icon type="link"></a-icon>
-        <span>{{ i18n "menu.link"}}</span>
-    </template>
-    <a-menu-item key="https://github.com/hossinasaadi/x-ui/">
-        <a-icon type="github"></a-icon>
-        <span>Github</span>
-    </a-menu-item>
-</a-sub-menu>
+
+
+<a-menu-item key="https://github.com/hossinasaadi/x-ui/">
+    <a-icon type="github"></a-icon>
+    <span>Github</span>
+</a-menu-item>
+
+
 <a-menu-item key="{{ .base_path }}logout">
     <a-icon type="logout"></a-icon>
     <span>{{ i18n "menu.logout"}}</span>
@@ -51,6 +60,9 @@
     </a-menu>
 </a-drawer>
 <script>
+
+
+
 
     const siderDrawer = {
         visible: false,

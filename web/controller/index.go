@@ -5,6 +5,7 @@ import (
 	"time"
 	"x-ui/logger"
 	"x-ui/web/job"
+	"x-ui/web/response"
 	"x-ui/web/service"
 	"x-ui/web/session"
 
@@ -46,23 +47,35 @@ func (a *IndexController) login(c *gin.Context) {
 	var form LoginForm
 	err := c.ShouldBind(&form)
 	if err != nil {
-		pureJsonMsg(c, false, I18n(c , "pages.login.toasts.invalidFormData"))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse{
+			ErrorMessage: I18n(c, "pages.login.toasts.invalidFormData"),
+		})
 		return
 	}
+
 	if form.Username == "" {
-		pureJsonMsg(c, false, I18n(c, "pages.login.toasts.emptyUsername"))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse{
+			ErrorMessage: I18n(c, "pages.login.toasts.emptyUsername"),
+		})
 		return
 	}
+
 	if form.Password == "" {
-		pureJsonMsg(c, false, I18n(c , "pages.login.toasts.emptyPassword"))
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse{
+			ErrorMessage: I18n(c, "pages.login.toasts.emptyPassword"),
+		})
 		return
 	}
+
 	user := a.userService.CheckUser(form.Username, form.Password)
 	timeStr := time.Now().Format("2006-01-02 15:04:05")
 	if user == nil {
 		job.NewStatsNotifyJob().UserLoginNotify(form.Username, getRemoteIp(c), timeStr, 0)
 		logger.Infof("wrong username or password: \"%s\" \"%s\"", form.Username, form.Password)
-		pureJsonMsg(c, false, I18n(c , "pages.login.toasts.wrongUsernameOrPassword"))
+
+		c.JSON(http.StatusUnprocessableEntity, response.ErrorResponse{
+			ErrorMessage: I18n(c, "pages.login.toasts.wrongUsernameOrPassword"),
+		})
 		return
 	} else {
 		logger.Infof("%s login success,Ip Address:%s\n", form.Username, getRemoteIp(c))
@@ -71,7 +84,9 @@ func (a *IndexController) login(c *gin.Context) {
 
 	err = session.SetLoginUser(c, user)
 	logger.Info("user", user.Id, "login success")
-	jsonMsg(c, I18n(c , "pages.login.toasts.successLogin"), err)
+	c.JSON(http.StatusOK, response.SuccessResponse{
+		SuccessMessage: I18n(c, "pages.login.toasts.successLogin"),
+	})
 }
 
 func (a *IndexController) logout(c *gin.Context) {

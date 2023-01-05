@@ -1,0 +1,85 @@
+{{define "mirrorModal"}}
+
+<style>
+    .ant-form {
+        display: flex;
+    }
+
+    .ant-form-item {
+        display: flex !important;
+    }
+
+
+</style>
+
+<a-modal id="mirror-modal" v-model="mirrorModal.visible" :title="mirrorModal.title" @ok="mirrorModal.ok"
+         :confirm-loading="mirrorModal.confirmLoading" :closable="true" :mask-closable="false"
+         :ok-text="mirrorModal.okText" cancel-text='{{ i18n "close" }}'>
+
+
+    {{template "form/mirrorForm"}}
+
+</a-modal>
+
+<script>
+    const mirrorModal = {
+        title: 'add mirror',
+        mirror: new Mirror(),
+        visible: false,
+        confirmLoading: false,
+        okText: '{{ i18n "sure" }}',
+        isEdit: false,
+        confirm: null,
+        ok() {
+            try {
+                ObjectUtil.execute(mirrorModal.confirm, mirrorModal.mirror);
+            }catch (e) {
+                alert(e)
+            }
+        },
+        show({
+                 title = '',
+                 isEdit = false,
+                 mirror = null,
+                 confirm = (mirror) => {},
+                 okText = '{{ i18n "sure" }}'
+             }) {
+            if (mirror) {
+                this.mirror = mirror;
+            } else {
+                this.inbound = new Mirror();
+            }
+            this.title = title;
+            this.okText = okText;
+            this.confirm = confirm;
+            this.visible = true;
+            this.isEdit = isEdit
+        },
+        close() {
+            mirrorModal.visible = false;
+            mirrorModal.mirror=new Mirror()
+            mirrorModal.loading(false);
+        },
+        loading(loading) {
+            mirrorModal.confirmLoading = loading;
+        },
+    };
+
+    new Vue({
+        delimiters: ['[[', ']]'],
+        mirror: new Mirror(),
+        el: '#mirror-modal',
+        data: {
+            mirrorModal: mirrorModal,
+            get mirror() {
+                return mirrorModal.mirror;
+            },
+            get isEdit() {
+                return mirrorModal.isEdit;
+            }
+        },
+        methods: {},
+    });
+
+</script>
+{{end}}
